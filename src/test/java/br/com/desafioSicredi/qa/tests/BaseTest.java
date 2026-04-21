@@ -17,14 +17,14 @@ public class BaseTest {
         try {
             given()
                     .when()
-                    .get("/test") // Endpoint da documentação
+                    .get("/test")
                     .then()
                     .statusCode(200);
 
             System.out.println("API Online. Prosseguindo com a execução...");
         } catch (Throwable e) {
-            System.err.println("ABORTANDO: API Indisponível ou fora do ar!");
-            throw new RuntimeException("Falha no Health Check: " + e.getMessage());
+            System.err.println("API Indisponível ou fora do ar!");
+            throw new RuntimeException("Falha: " + e.getMessage());
         }
     }
 }

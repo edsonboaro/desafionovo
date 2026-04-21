@@ -22,7 +22,7 @@ public class LoginTest extends BaseTest {
         authClient.login(loginRequest)
                 .then()
                 .statusCode(200)
-                .body("accessToken", notNullValue()) // <--- Mudamos de "token" para "accessToken"
+                .body("accessToken", notNullValue()) // <--- Mudei de "token" para "accessToken" melhoria ou bug
                 .body("username", equalTo(loginRequest.getUsername()))
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/login-schema.json"));
     }
@@ -34,18 +34,18 @@ public class LoginTest extends BaseTest {
 
         authClient.login(loginInvalido)
                 .then()
-                .statusCode(400) // A DummyJSON costuma retornar 400 para erro de login
+                .statusCode(400)
                 .body("message", containsString("Invalid credentials"));
     }
 
     @Test
     @DisplayName("Deve retornar erro ao tentar login com campos vazios")
     public void deveRetornarErroCamposVazios() {
-        LoginRequest loginVazio = new LoginRequest("", ""); // Username e Senha vazios
+        LoginRequest loginVazio = new LoginRequest("", "");
 
         authClient.login(loginVazio)
                 .then()
-                .statusCode(400) // Bad Request
+                .statusCode(400)
                 .body("message", notNullValue());
     }
 }

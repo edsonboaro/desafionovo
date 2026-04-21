@@ -4,7 +4,6 @@ import br.com.desafioSicredi.qa.client.ProductClient;
 import br.com.desafioSicredi.qa.model.response.ProductListResponse;
 import br.com.desafioSicredi.qa.tests.BaseTest;
 import br.com.desafioSicredi.qa.utils.DataHelper;
-import io.restassured.module.jsv.JsonSchemaValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

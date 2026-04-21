@@ -2,25 +2,16 @@ package br.com.desafioSicredi.qa.client;
 
 import br.com.desafioSicredi.qa.specs.RequestSpecs;
 import io.restassured.response.Response;
+
 import static io.restassured.RestAssured.given;
 
 public class ProductClient {
-
-    private static final String PRODUCTS_ENDPOINT = "/products";
 
     public Response listarTodos() {
         return given()
                 .spec(RequestSpecs.getBasicRequestSpec())
                 .when()
-                .get(PRODUCTS_ENDPOINT);
-    }
-
-    public Response buscarPorId(int id) {
-        return given()
-                .spec(RequestSpecs.getBasicRequestSpec())
-                .pathParam("id", id)
-                .when()
-                .get(PRODUCTS_ENDPOINT + "/{id}");
+                .get("/products");
     }
 
     public Response listarComPaginacao(int limit, int skip) {
@@ -29,14 +20,36 @@ public class ProductClient {
                 .queryParam("limit", limit)
                 .queryParam("skip", skip)
                 .when()
-                .get(PRODUCTS_ENDPOINT);
+                .get("/products");
     }
 
-    public Response buscarProduto(String nomeProduto) {
+    public Response buscarPorId(int id) {
         return given()
-                .spec(RequestSpecs.getBasicRequestSpec()) // Adicionado aqui!
-                .queryParam("q", nomeProduto)
+                .spec(RequestSpecs.getBasicRequestSpec())
                 .when()
-                .get(PRODUCTS_ENDPOINT + "/search"); // Usando a constante + sub-rota
+                .get("/products/" + id);
+    }
+
+    public Response buscarProduto(String termoBusca) {
+        return given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .queryParam("q", termoBusca)
+                .when()
+                .get("/products/search");
+    }
+
+    public Response listarProdutosAutenticados() {
+        return given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .when()
+                .get("/auth/products");
+    }
+
+    public Response listarProdutosAutenticados(String token) {
+        return given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .get("/auth/products");
     }
 }

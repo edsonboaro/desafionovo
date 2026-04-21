@@ -40,15 +40,6 @@ public class UserTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Deve retornar erro 404 ao buscar usuário com ID inexistente")
-    public void deveRetornarErroIdInexistente() {
-        userClient.buscarPorId(9999) // ID que não existe
-                .then()
-                .statusCode(404)
-                .body("message", containsString("not found"));
-    }
-
-    @Test
     @DisplayName("Deve retornar 404 ao buscar um recurso inexistente")
     public void deveRetornarErroAoBuscarRecursoInexistente() {
         userClient.buscarPorId(999999)
@@ -60,7 +51,7 @@ public class UserTest extends BaseTest {
     @Test
     @DisplayName("Deve buscar usuários por um termo específico")
     public void deveBuscarUsuariosPorTermo() {
-        String termoBusca = "Emily"; // Emily é um nome que sabemos que existe na DummyJSON
+        String termoBusca = "Emily";
 
         userClient.buscarUsuarios(termoBusca)
                 .then()
