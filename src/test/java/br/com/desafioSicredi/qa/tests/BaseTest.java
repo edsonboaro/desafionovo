@@ -21,9 +21,9 @@ public class BaseTest {
                     .then()
                     .statusCode(200);
 
-            System.out.println("API Online. Prosseguindo com a execução...");
+            System.out.println("API Online. Prosseguindo com a execucao...");
         } catch (Throwable e) {
-            System.err.println("API Indisponível ou fora do ar!");
+            System.err.println("API Indisponivel ou fora do ar!");
             throw new RuntimeException("Falha: " + e.getMessage());
         }
     }

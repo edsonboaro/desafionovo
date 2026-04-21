@@ -16,20 +16,20 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("Deve realizar login com sucesso - Validando Token e Contrato")
-    public void deveRealizarLoginComSucesso() {
+    public void shouldLoginSuccessfully() {
         LoginRequest loginRequest = DataFactory.gerarLoginValido();
 
         authClient.login(loginRequest)
                 .then()
                 .statusCode(200)
                 .body("accessToken", notNullValue()) // <--- Mudei de "token" para "accessToken" melhoria ou bug
-                .body("username", equalTo(loginRequest.getUsername()))
+                .body("username", is(loginRequest.getUsername()))
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/login-schema.json"));
     }
 
     @Test
     @DisplayName("Deve retornar erro ao tentar login com credenciais inválidas")
-    public void deveRetornarErroComCredenciaisInvalidas() {
+    public void shouldReturnErrorWithInvalidCredentials() {
         LoginRequest loginInvalido = new LoginRequest("usuario_errado", "senha_errada");
 
         authClient.login(loginInvalido)
@@ -40,7 +40,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     @DisplayName("Deve retornar erro ao tentar login com campos vazios")
-    public void deveRetornarErroCamposVazios() {
+    public void shouldReturnErrorWithEmptyFields() {
         LoginRequest loginVazio = new LoginRequest("", "");
 
         authClient.login(loginVazio)

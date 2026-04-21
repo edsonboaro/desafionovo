@@ -4,8 +4,12 @@ import br.com.desafioSicredi.qa.client.ProductClient;
 import br.com.desafioSicredi.qa.model.response.ProductListResponse;
 import br.com.desafioSicredi.qa.tests.BaseTest;
 import br.com.desafioSicredi.qa.utils.DataHelper;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -123,5 +127,48 @@ public class ProductTest extends BaseTest {
                 .body("products", hasSize(0))
                 .body("total", is(totalProducts))
                 .body("skip", is(invalidSkip));
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro ao buscar produto com ID inexistente")
+    void shouldReturnErrorWhenSearchingForNonExistentProductId() {
+        productClient.buscarPorId(999999)
+                .then()
+                .statusCode(404)
+                .body("message", containsString("not found"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar erro ao buscar produto com ID inválido")
+    void shouldReturnErrorWhenSearchingForInvalidProductId() {
+        productClient.buscarPorId("abc")
+                .then()
+                .statusCode(404)
+                .body("message", notNullValue());
+    }
+
+    @Test
+    @DisplayName("Deve garantir consistência entre listagem de produtos e busca por ID")
+    void shouldEnsureConsistencyBetweenListAndGetById() {
+
+        Response listResponse = productClient.listarTodos()
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        int id = listResponse.path("products[0].id");
+        String title = listResponse.path("products[0].title");
+        float price = listResponse.path("products[0].price");
+
+        Response detailResponse = productClient.buscarPorId(id)
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        assertThat(detailResponse.path("id"), is(id));
+        assertThat(detailResponse.path("title"), is(title));
+        assertThat(detailResponse.path("price"), is(price));
     }
 }

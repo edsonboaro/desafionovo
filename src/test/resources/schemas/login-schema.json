@@ -12,5 +12,16 @@
     "accessToken": { "type": "string" },
     "refreshToken": { "type": "string" }
   },
-  "required": ["id", "username", "accessToken"]
+  "required": [
+    "id",
+    "username",
+    "email",
+    "firstName",
+    "lastName",
+    "gender",
+    "image",
+    "accessToken",
+    "refreshToken"
+  ],
+  "additionalProperties": true
 }

@@ -52,4 +52,19 @@ public class ProductClient {
                 .when()
                 .get("/auth/products");
     }
+
+    public Response buscarPorId(String id) {
+        return given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .when()
+                .get("/products/" + id);
+    }
+
+    public Response criarProduto(Object body) {
+        return given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .body(body)
+                .when()
+                .post("/products/add");
+    }
 }

@@ -7,6 +7,8 @@ import br.com.desafioSicredi.qa.tests.BaseTest;
 import br.com.desafioSicredi.qa.utils.DataHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -48,6 +50,7 @@ public class ProductCreationTest extends BaseTest {
                 .then()
                 .statusCode(201)
                 .body("id", is(expectedNextId))
+                .body("title", anyOf(nullValue(), emptyOrNullString()))
                 .body("description", is(semTitulo.getDescription()));
     }
 
@@ -77,6 +80,44 @@ public class ProductCreationTest extends BaseTest {
                 .when()
                 .post("/products/add")
                 .then()
-                .statusCode(400);
+                .statusCode(400)
+                .body(notNullValue());
     }
+
+    @Test
+    @DisplayName("Deve permitir cadastrar produto com tipo inválido para o campo price")
+    public void shouldAllowProductCreationWithInvalidPriceType() {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("title", "Produto Teste");
+        payload.put("price", "cem");
+
+        given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .body(payload)
+                .when()
+                .post("/products/add")
+                .then()
+                .statusCode(201)
+                .body("title", is("Produto Teste"))
+                .body("price", is("cem"));
+    }
+
+    @Test
+    @DisplayName("Deve permitir cadastrar produto com valor negativo para o campo price")
+    public void shouldAllowProductCreationWithNegativePrice() {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("title", "Produto Teste");
+        payload.put("price", -100);
+
+        given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .body(payload)
+                .when()
+                .post("/products/add")
+                .then()
+                .statusCode(201)
+                .body("title", is("Produto Teste"))
+                .body("price", is(-100));
+    }
+
 }
