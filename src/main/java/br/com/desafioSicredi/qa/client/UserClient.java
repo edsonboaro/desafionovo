@@ -22,4 +22,12 @@ public class UserClient {
                 .when()
                 .get(USERS_ENDPOINT + "/{id}");
     }
+
+    public Response buscarUsuarios(String query) {
+        return given()
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .queryParam("q", query)
+                .when()
+                .get(USERS_ENDPOINT + "/search");
+    }
 }

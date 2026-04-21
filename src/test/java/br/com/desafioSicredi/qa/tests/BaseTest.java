@@ -16,7 +16,7 @@ public class BaseTest {
 
         // 2. SMOKE TEST / HEALTH CHECK
         // Valida se o endpoint /test da imagem que você mandou está respondendo
-        System.out.println("====== [SMOKE TEST] Verificando integridade da API ======");
+        System.out.println("====== Verificando integridade da API ======");
 
         try {
             given()

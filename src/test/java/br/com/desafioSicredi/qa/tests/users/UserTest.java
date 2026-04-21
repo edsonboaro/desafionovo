@@ -1,12 +1,13 @@
 package br.com.desafioSicredi.qa.tests.users;
 
 import br.com.desafioSicredi.qa.client.UserClient;
+import br.com.desafioSicredi.qa.tests.BaseTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.hamcrest.Matchers.*;
 
-public class UserTest {
+public class UserTest extends BaseTest {
     private UserClient userClient = new UserClient();
 
     @Test
@@ -54,5 +55,17 @@ public class UserTest {
                 .then()
                 .statusCode(404)
                 .body("message", containsString("not found"));
+    }
+
+    @Test
+    @DisplayName("Deve buscar usuários por um termo específico")
+    public void deveBuscarUsuariosPorTermo() {
+        String termoBusca = "Emily"; // Emily é um nome que sabemos que existe na DummyJSON
+
+        userClient.buscarUsuarios(termoBusca)
+                .then()
+                .statusCode(200)
+                .body("users.firstName", everyItem(containsStringIgnoringCase(termoBusca)))
+                .body("total", is(greaterThanOrEqualTo(0)));
     }
 }

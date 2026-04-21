@@ -1,4 +1,15 @@
+# Pastas do Allure
+.allure/
+allure-results/
+allure-report/
+
+# Configurações do IntelliJ
+.idea/
+*.iml
+
+# Pasta de compilação do Maven
 target/
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -9,7 +20,6 @@ target/
 .idea/compiler.xml
 .idea/libraries/
 *.iws
-*.iml
 *.ipr
 
 ### Eclipse ###

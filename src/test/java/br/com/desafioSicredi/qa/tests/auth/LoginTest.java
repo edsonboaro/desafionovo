@@ -3,13 +3,14 @@ package br.com.desafioSicredi.qa.tests.auth;
 import br.com.desafioSicredi.qa.client.AuthClient;
 import br.com.desafioSicredi.qa.data.factory.DataFactory;
 import br.com.desafioSicredi.qa.model.request.LoginRequest;
+import br.com.desafioSicredi.qa.tests.BaseTest;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
 
-public class LoginTest {
+public class LoginTest extends BaseTest {
 
     private final AuthClient authClient = new AuthClient();
 

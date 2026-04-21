@@ -2,6 +2,8 @@ package br.com.desafioSicredi.qa.tests.products;
 
 import br.com.desafioSicredi.qa.client.ProductClient;
 import br.com.desafioSicredi.qa.model.response.ProductListResponse;
+import br.com.desafioSicredi.qa.tests.BaseTest;
+import br.com.desafioSicredi.qa.utils.DataHelper;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,7 @@ import io.restassured.module.jsv.JsonSchemaValidator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class ProductTest {
+public class ProductTest extends BaseTest {
     private ProductClient productClient = new ProductClient();
 
     @Test
@@ -18,14 +20,11 @@ public class ProductTest {
         int limit = 1;
         int skip = 10;
 
-        // Aqui usamos o seu ProductListResponse para mapear a resposta
         ProductListResponse response = productClient.buscarComPaginacao(limit, skip)
                 .then()
-                .log().all()
                 .statusCode(200)
                 .extract().as(ProductListResponse.class);
 
-        // Validação Sênior: conferir se o que a API prometeu, ela entregou
         assertThat(response.getProducts().size(), is(limit));
         assertThat(response.getLimit(), is(limit));
         assertThat(response.getSkip(), is(skip));
@@ -34,7 +33,7 @@ public class ProductTest {
     @Test
     @DisplayName("Deve validar contrato de um produto específico")
     public void deveValidarContratoProdutoUnico() {
-        new ProductClient().buscarPorId(1)
+        productClient.buscarPorId(1)
                 .then()
                 .statusCode(200)
                 .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/product-schema.json"));
@@ -43,14 +42,10 @@ public class ProductTest {
     @Test
     @DisplayName("Deve validar comportamento da paginação com limite excessivo")
     public void deveValidarLimiteExcessivo() {
-        io.restassured.response.Response response = productClient.listarComParametros(999, 0);
-        int totalNoBanco = response.path("total");
-        int tamanhoDaLista = response.path("products.size()");
+        int totalNoBanco = DataHelper.getTotalProdutosAtual();
 
-        System.out.println("LOG [Borda]: Solicitado limite 999. Total no banco: " + totalNoBanco + " | Retornou: " + tamanhoDaLista);
-
-        response.then()
-                .log().ifValidationFails()
+        productClient.listarComParametros(999, 0)
+                .then()
                 .statusCode(200)
                 .body("products", hasSize(totalNoBanco));
     }
@@ -60,7 +55,6 @@ public class ProductTest {
     public void deveValidarLimiteInvalido() {
         productClient.listarComParametros(-100, 0)
                 .then()
-                .log().all() // Mostra tudo (Headers e Body) no console do IntelliJ
                 .statusCode(200);
     }
 
@@ -73,5 +67,4 @@ public class ProductTest {
                 .body("products", hasSize(0))
                 .body("total", is(0));
     }
-
 }
