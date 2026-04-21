@@ -3,9 +3,11 @@ package br.com.desafioSicredi.qa.client;
 import br.com.desafioSicredi.qa.model.request.LoginRequest;
 import br.com.desafioSicredi.qa.specs.RequestSpecs;
 import io.restassured.response.Response;
+
 import static io.restassured.RestAssured.given;
 
 public class AuthClient {
+
     public Response login(LoginRequest loginRequest) {
         return given()
                 .spec(RequestSpecs.getBasicRequestSpec())
@@ -15,10 +17,19 @@ public class AuthClient {
     }
 
     public String getToken(String username, String password) {
-        LoginRequest login = LoginRequest.builder()
-                .username("kminchelle")
-                .password("0lel09me")
+        LoginRequest loginRequest = LoginRequest.builder()
+                .username(username)
+                .password(password)
                 .build();
-        return login(login).then().extract().path("token");
+
+        return login(loginRequest)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("accessToken");
+    }
+
+    public String getValidAccessToken() {
+        return getToken("emilys", "emilyspass");
     }
 }

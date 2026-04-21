@@ -23,22 +23,13 @@ public class ProductClient {
                 .get(PRODUCTS_ENDPOINT + "/{id}");
     }
 
-    public Response buscarComPaginacao(int limit, int skip) {
+    public Response listarComPaginacao(int limit, int skip) {
         return given()
                 .spec(RequestSpecs.getBasicRequestSpec())
                 .queryParam("limit", limit)
                 .queryParam("skip", skip)
                 .when()
                 .get(PRODUCTS_ENDPOINT);
-    }
-
-    public Response listarComParametros(int limit, int skip) {
-        return given()
-                .spec(RequestSpecs.getBasicRequestSpec()) // Adicionado aqui!
-                .queryParam("limit", limit)
-                .queryParam("skip", skip)
-                .when()
-                .get(PRODUCTS_ENDPOINT); // Usando a constante para evitar erro de digitação
     }
 
     public Response buscarProduto(String nomeProduto) {

@@ -1,13 +1,17 @@
-package br.com.desafioSicredi.qa.tests.products;
+package br.com.desafioSicredi.qa.tests.security;
 
+import br.com.desafioSicredi.qa.client.AuthClient;
 import br.com.desafioSicredi.qa.tests.BaseTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class ProductAuthTest extends BaseTest {
+
+    private final AuthClient authClient = new AuthClient();
 
     @Test
     @DisplayName("Deve impedir a listagem de produtos sem token de autenticação")
@@ -33,14 +37,7 @@ public class ProductAuthTest extends BaseTest {
     @Test
     @DisplayName("Deve listar produtos com sucesso usando um token válido")
     public void shouldListProductsWithValidToken() {
-        String validToken = given()
-                .contentType("application/json")
-                .body("{ \"username\": \"emilys\", \"password\": \"emilyspass\" }")
-                .when()
-                .post("/auth/login")
-                .then()
-                .statusCode(200)
-                .extract().path("accessToken");
+        String validToken = authClient.getValidAccessToken();
 
         given()
                 .header("Authorization", "Bearer " + validToken)
@@ -48,6 +45,7 @@ public class ProductAuthTest extends BaseTest {
                 .get("/auth/products")
                 .then()
                 .statusCode(200)
-                .body("products", notNullValue());
+                .body("products", notNullValue())
+                .body("products.size()", greaterThan(0));
     }
 }

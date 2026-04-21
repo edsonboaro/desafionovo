@@ -10,12 +10,8 @@ public class BaseTest {
 
     @BeforeAll
     public static void setup() {
-        // 1. Vincula o seu RequestSpecs globalmente
-        // Agora você não precisa chamar given(RequestSpecs.requestSpec()) em todo teste
         RestAssured.requestSpecification = RequestSpecs.getBasicRequestSpec();
 
-        // 2. SMOKE TEST / HEALTH CHECK
-        // Valida se o endpoint /test da imagem que você mandou está respondendo
         System.out.println("====== Verificando integridade da API ======");
 
         try {
@@ -25,10 +21,9 @@ public class BaseTest {
                     .then()
                     .statusCode(200);
 
-            System.out.println("✅ API Online. Prosseguindo com a execução...");
+            System.out.println("API Online. Prosseguindo com a execução...");
         } catch (Throwable e) {
-            System.err.println("❌ ABORTANDO: API Indisponível ou fora do ar!");
-            // Interrompe tudo se o ambiente não estiver pronto
+            System.err.println("ABORTANDO: API Indisponível ou fora do ar!");
             throw new RuntimeException("Falha no Health Check: " + e.getMessage());
         }
     }
