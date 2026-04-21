@@ -1,12 +1,15 @@
 package br.com.desafioSicredi.qa.tests.products;
 
+import br.com.desafioSicredi.qa.data.factory.ProductDataFactory;
+import br.com.desafioSicredi.qa.model.request.ProductRequest;
+import br.com.desafioSicredi.qa.specs.RequestSpecs;
 import br.com.desafioSicredi.qa.tests.BaseTest;
 import br.com.desafioSicredi.qa.utils.DataHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class ProductCreationTest extends BaseTest {
 
@@ -16,22 +19,16 @@ public class ProductCreationTest extends BaseTest {
         int currentTotal = DataHelper.getTotalProdutosAtual();
         int expectedNextId = currentTotal + 1;
 
-        String payload = """
-                {
-                    "title": "Novo Produto Automação QA",
-                    "price": 150.0,
-                    "description": "Descricao do produto de teste",
-                    "categoryId": 2
-                }
-                """;
+        ProductRequest novoProduto = ProductDataFactory.novoProdutoValido();
 
         given()
-                .body(payload)
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .body(novoProduto)
                 .when()
                 .post("/products/add")
                 .then()
                 .statusCode(201)
-                .body("title", is("Novo Produto Automação QA"))
+                .body("title", is(novoProduto.getTitle()))
                 .body("id", is(expectedNextId));
     }
 
@@ -41,49 +38,41 @@ public class ProductCreationTest extends BaseTest {
         int currentTotal = DataHelper.getTotalProdutosAtual();
         int expectedNextId = currentTotal + 1;
 
-        String partialPayload = """
-                {
-                    "price": 100.0,
-                    "description": "Produto sem titulo"
-                }
-                """;
+        ProductRequest semTitulo = ProductDataFactory.produtoSemTitulo();
 
         given()
-                .body(partialPayload)
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .body(semTitulo)
                 .when()
                 .post("/products/add")
                 .then()
                 .statusCode(201)
                 .body("id", is(expectedNextId))
-                .body("description", is("Produto sem titulo"));
+                .body("description", is(semTitulo.getDescription()));
     }
 
     @Test
     @DisplayName("Deve cadastrar produto com preço igual a zero")
     public void shouldCreateProductWithZeroPrice() {
-        String zeroPricePayload = """
-                {
-                    "title": "Produto Gratis",
-                    "price": 0.0,
-                    "description": "Teste de limite inferior de preco"
-                }
-                """;
+        ProductRequest gratis = ProductDataFactory.produtoComPrecoZero();
 
         given()
-                .body(zeroPricePayload)
+                .spec(RequestSpecs.getBasicRequestSpec())
+                .body(gratis)
                 .when()
                 .post("/products/add")
                 .then()
                 .statusCode(201)
-                .body("price", org.hamcrest.Matchers.comparesEqualTo(0));
+                .body("price", comparesEqualTo(0));
     }
 
     @Test
     @DisplayName("Deve retornar erro para JSON malformado")
     public void shouldReturnErrorForMalformedJson() {
-        String malformedPayload = "{ 'title': 'JSON invalido' ";
+        String malformedPayload = "{ \"title\": \"JSON invalido\" ";
 
         given()
+                .spec(RequestSpecs.getBasicRequestSpec())
                 .body(malformedPayload)
                 .when()
                 .post("/products/add")
